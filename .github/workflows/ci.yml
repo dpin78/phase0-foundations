@@ -1,0 +1,24 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install root tooling
+        run: npm i -g pnpm
+      - name: Install worker deps
+        run: cd worker && pnpm i
+      - name: Install api deps
+        run: cd api && pnpm i
+      - name: Typecheck
+        run: |
+          cd worker && pnpm run build --noEmit
+          cd ../api && pnpm run build --noEmit
